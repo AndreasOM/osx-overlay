@@ -26,9 +26,13 @@ NSMutableDictionary* m_pOverlays;
 //	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/anti666tv/blob/master/live/overlay_fiiish.html"];
 	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/osx-overlay/blob/master/sample/1.html"];
 	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/osx-overlay/blob/master/sample/2.html"];
+	[self createWebViewForUrl:@"https://streamlabs.com/alert-box/v3/YES-AS-IF" withTitle:@"Streamlabs"];
 }
 
 - (void)createWebViewForUrl:(NSString*)url {
+	[self createWebViewForUrl:url withTitle:url];
+}
+- (void)createWebViewForUrl:(NSString*)url withTitle:(NSString*)title{
 	NSMutableDictionary* overlay = [m_pOverlays objectForKey:url];
 	if( overlay == nil )
 	{
@@ -47,7 +51,8 @@ NSMutableDictionary* m_pOverlays;
 	[self.view addSubview:webView];
 	
 	[overlay setObject:webView forKey:@"webView"];
-	
+	[overlay setObject:title forKey:@"title"];
+
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 		NSLog(@"Loading... %@", url);
 		NSURL* urlUrl = [NSURL URLWithString:url];
@@ -64,9 +69,9 @@ NSMutableDictionary* m_pOverlays;
 	NSMenuItem* overlaysItem = [mainMenu itemWithTitle:@"Overlays"];
 	NSMenu* overlaysMenu = overlaysItem.submenu;
 	
-	NSMenuItem* menuItem = [[NSMenuItem alloc] initWithTitle:url action:@selector(menuUrlAction:) keyEquivalent:@""];
+	NSMenuItem* menuItem = [[NSMenuItem alloc] initWithTitle:title action:@selector(menuUrlAction:) keyEquivalent:@""];
 	[menuItem setTarget:self];
-	NSMenu* menuItemMenu = [[NSMenu alloc] initWithTitle:url];
+	NSMenu* menuItemMenu = [[NSMenu alloc] initWithTitle:title];
 	[[menuItemMenu addItemWithTitle:@"Reload" action:@selector(menuUrlReload:) keyEquivalent:@""] setTarget:self];
 //	[[menuItemMenu addItemWithTitle:@"Toggle" action:@selector(menuUrlToggle:) keyEquivalent:@""] setTarget:self];
 	[menuItem setState: NSControlStateValueOn];
@@ -93,7 +98,20 @@ NSMutableDictionary* m_pOverlays;
 	NSMutableDictionary* overlay = [m_pOverlays objectForKey:menuItem.title];
 	if( overlay == nil )
 	{
-		return;
+		// try to find by title
+		for(NSString* key in m_pOverlays)
+		{
+			NSDictionary* o = m_pOverlays[key];
+			if( [o objectForKey:@"title" ] == menuItem.title )
+			{
+				overlay = o;
+				break;
+			}
+		}
+		if( overlay == nil )
+		{
+			return;
+		}
 	}
 	
 	WKWebView* webView = [overlay objectForKey:@"webView"];
