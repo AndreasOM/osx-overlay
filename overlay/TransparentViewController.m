@@ -74,6 +74,7 @@ NSMutableDictionary* m_pOverlays;
 	NSMenu* menuItemMenu = [[NSMenu alloc] initWithTitle:title];
 	[[menuItemMenu addItemWithTitle:@"Reload" action:@selector(menuUrlReload:) keyEquivalent:@""] setTarget:self];
 //	[[menuItemMenu addItemWithTitle:@"Toggle" action:@selector(menuUrlToggle:) keyEquivalent:@""] setTarget:self];
+	[[menuItemMenu addItemWithTitle:@"Remove" action:@selector(menuUrlRemove:) keyEquivalent:@""] setTarget:self];
 	[menuItem setState: NSControlStateValueOn];
 	[overlaysMenu addItem:menuItem];
 	[overlaysMenu setSubmenu:menuItemMenu forItem:menuItem];
@@ -92,30 +93,34 @@ NSMutableDictionary* m_pOverlays;
 	[menuItem setState: NSControlStateValueOn];
 }
 
-- (void)menuUrlAction:(id)sender {
+- (void)menuUrlRemove:(id)sender {
 	NSMenuItem* menuItem = (NSMenuItem*)sender;
 
-	NSMutableDictionary* overlay = [m_pOverlays objectForKey:menuItem.title];
-	if( overlay == nil )
+	WKWebView* webView = [self findWebViewForMenuItem:menuItem.parentItem];
+	if( webView == nil )
 	{
-		// try to find by title
-		for(NSString* key in m_pOverlays)
-		{
-			NSDictionary* o = m_pOverlays[key];
-			if( [o objectForKey:@"title" ] == menuItem.title )
-			{
-				overlay = o;
-				break;
-			}
-		}
-		if( overlay == nil )
-		{
-			return;
-		}
+		return;
 	}
 	
-	WKWebView* webView = [overlay objectForKey:@"webView"];
+	NSMenu* mainMenu = [[NSApplication sharedApplication] mainMenu];
+	
+	NSMenuItem* overlaysItem = [mainMenu itemWithTitle:@"Overlays"];
+	NSMenu* overlaysMenu = overlaysItem.submenu;
 
+	[overlaysMenu removeItem:menuItem.parentItem];
+	[webView removeFromSuperview];
+	[self deleteEntryByWebView:webView];
+}
+
+- (void)menuUrlAction:(id)sender {
+	NSMenuItem* menuItem = (NSMenuItem*)sender;
+	
+	WKWebView* webView = [self findWebViewForMenuItem:menuItem];
+	if( webView == nil )
+	{
+		return;
+	}
+	
 	switch( menuItem.state )
 	{
 		case NSControlStateValueOn:
@@ -131,6 +136,42 @@ NSMutableDictionary* m_pOverlays;
 			}
 			break;
 	}
+}
+
+- (void)deleteEntryByWebView:(WKWebView*)webView {
+	for(NSString* key in m_pOverlays)
+	{
+		NSDictionary* o = m_pOverlays[key];
+		if( [o objectForKey:@"webView" ] == webView )
+		{
+			[m_pOverlays removeObjectForKey:key];
+			break;
+		}
+	}
+
+}
+- (WKWebView*)findWebViewForMenuItem:(NSMenuItem*)menuItem {
+	NSDictionary* overlay = [m_pOverlays objectForKey:menuItem.title];
+	if( overlay == nil )
+	{
+		// try to find by title
+		for(NSString* key in m_pOverlays)
+		{
+			NSDictionary* o = m_pOverlays[key];
+			if( [o objectForKey:@"title" ] == menuItem.title )
+			{
+				overlay = o;
+				break;
+			}
+		}
+		if( overlay == nil )
+		{
+			return nil;
+		}
+	}
+	
+	WKWebView* webView = [overlay objectForKey:@"webView"];
+	return webView;
 }
 
 - (void)menuAddOverlay:(id)sender {
