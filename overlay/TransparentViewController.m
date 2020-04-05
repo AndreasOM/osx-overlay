@@ -52,7 +52,12 @@ NSMutableDictionary* m_pOverlays;
 		NSLog(@"Loading... %@", url);
 		NSURL* urlUrl = [NSURL URLWithString:url];
 		NSURLRequest* request = [NSURLRequest requestWithURL:urlUrl];
-		[webView loadRequest:request];
+		NSMutableDictionary* overlay = [m_pOverlays objectForKey:url];
+		WKWebView* webView = [overlay objectForKey:@"webView"];
+		if( webView != nil )
+		{
+			[webView loadRequest:request];
+		}
 	});
 	NSMenu* mainMenu = [[NSApplication sharedApplication] mainMenu];
 	
