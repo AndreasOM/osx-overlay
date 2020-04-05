@@ -20,7 +20,8 @@
 	
 	[self.view setFrame:[[NSScreen mainScreen] frame]];
 
-	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/anti666tv/blob/master/live/overlay_fiiish.html"];
+//	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/anti666tv/blob/master/live/overlay_fiiish.html"];
+	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/osx-overlay/blob/master/sample/1.html"];
 }
 
 - (void)createWebViewForUrl:(NSString*)url {
