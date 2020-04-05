@@ -40,6 +40,7 @@
 		E9D04A17243A41B400DE2490 /* TransparentWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TransparentWindowController.h; sourceTree = "<group>"; };
 		E9D04A18243A41B400DE2490 /* TransparentWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TransparentWindowController.m; sourceTree = "<group>"; };
 		E9D04A1B243A5CE900DE2490 /* 1.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = 1.html; sourceTree = "<group>"; };
+		E9D04A1C243A72EB00DE2490 /* 2.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = 2.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				E9D04A1B243A5CE900DE2490 /* 1.html */,
+				E9D04A1C243A72EB00DE2490 /* 2.html */,
 			);
 			path = sample;
 			sourceTree = "<group>";
