@@ -8,11 +8,16 @@
 
 #import "TransparentViewController.h"
 
+#import "Overlay.h"
+#import "OverlayManager.h"
+
 @interface TransparentViewController ()
 
 @end
 
-NSMutableDictionary* m_pOverlays;
+//NSMutableDictionary* m_pOverlays;
+
+OverlayManager* m_pOverlayManager;
 
 //@synthesize
 @implementation TransparentViewController
@@ -22,7 +27,9 @@ NSMutableDictionary* m_pOverlays;
 	
 	[self.view setFrame:[[NSScreen mainScreen] frame]];
 
-	m_pOverlays = [[NSMutableDictionary alloc] init];
+	m_pOverlayManager = [[OverlayManager alloc] init];
+	
+//	m_pOverlays = [[NSMutableDictionary alloc] init];
 //	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/anti666tv/blob/master/live/overlay_fiiish.html"];
 	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/osx-overlay/blob/master/sample/1.html"];
 	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/osx-overlay/blob/master/sample/2.html"];
@@ -33,35 +40,24 @@ NSMutableDictionary* m_pOverlays;
 	[self createWebViewForUrl:url withTitle:url];
 }
 - (void)createWebViewForUrl:(NSString*)url withTitle:(NSString*)title{
-	NSMutableDictionary* overlay = [m_pOverlays objectForKey:url];
-	if( overlay == nil )
-	{
-		// new entry ... currently default
-		// :TODO: could just be a struct?!
-		overlay = [[NSMutableDictionary alloc] init];
-		[m_pOverlays setObject:overlay forKey:url];
-	}
-	else
-	{
-		// :TODO: decide what we do here
-	}
+	Overlay* overlay = [m_pOverlayManager findOrCreateForUrl:url];
+	
 	WKWebView* webView = [[WKWebView alloc] init];
 	[webView setValue:[NSNumber numberWithInt:false] forKey:@"drawsBackground"];
 	webView.frame = self.view.bounds;
 	[self.view addSubview:webView];
 	
-	[overlay setObject:webView forKey:@"webView"];
-	[overlay setObject:title forKey:@"title"];
+	[overlay setWebView:webView];
+	[overlay setTitle:title];
 
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 		NSLog(@"Loading... %@", url);
 		NSURL* urlUrl = [NSURL URLWithString:url];
 		NSURLRequest* request = [NSURLRequest requestWithURL:urlUrl];
-		NSMutableDictionary* overlay = [m_pOverlays objectForKey:url];
-		WKWebView* webView = [overlay objectForKey:@"webView"];
-		if( webView != nil )
+		Overlay* overlay = [m_pOverlayManager findOrCreateForUrl:url];
+		if( overlay.webView != nil )
 		{
-			[webView loadRequest:request];
+			[overlay.webView loadRequest:request];
 		}
 	});
 	NSMenu* mainMenu = [[NSApplication sharedApplication] mainMenu];
@@ -139,39 +135,21 @@ NSMutableDictionary* m_pOverlays;
 }
 
 - (void)deleteEntryByWebView:(WKWebView*)webView {
-	for(NSString* key in m_pOverlays)
-	{
-		NSDictionary* o = m_pOverlays[key];
-		if( [o objectForKey:@"webView" ] == webView )
-		{
-			[m_pOverlays removeObjectForKey:key];
-			break;
-		}
-	}
-
+	Overlay* overlay = [m_pOverlayManager findByWebView:webView];
+	[m_pOverlayManager removeForUrl:overlay.url];
 }
 - (WKWebView*)findWebViewForMenuItem:(NSMenuItem*)menuItem {
-	NSDictionary* overlay = [m_pOverlays objectForKey:menuItem.title];
+	Overlay* overlay = [m_pOverlayManager findByUrl:menuItem.title];
 	if( overlay == nil )
 	{
-		// try to find by title
-		for(NSString* key in m_pOverlays)
-		{
-			NSDictionary* o = m_pOverlays[key];
-			if( [o objectForKey:@"title" ] == menuItem.title )
-			{
-				overlay = o;
-				break;
-			}
-		}
+		overlay = [m_pOverlayManager findByTitle:menuItem.title];
 		if( overlay == nil )
 		{
 			return nil;
 		}
 	}
 	
-	WKWebView* webView = [overlay objectForKey:@"webView"];
-	return webView;
+	return overlay.webView;
 }
 
 - (void)menuAddOverlay:(id)sender {
