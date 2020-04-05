@@ -28,12 +28,29 @@ OverlayManager* m_pOverlayManager;
 	[self.view setFrame:[[NSScreen mainScreen] frame]];
 
 	m_pOverlayManager = [[OverlayManager alloc] init];
+	if( ![m_pOverlayManager load] )
+	{
+		[[m_pOverlayManager findOrCreateForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/osx-overlay/blob/master/sample/1.html"] setTitle:@"Sample 1"];
+		[[m_pOverlayManager findOrCreateForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/osx-overlay/blob/master/sample/2.html"] setTitle:@"Sample 2"];
+	}
+
+	NSMenu* mainMenu = [[NSApplication sharedApplication] mainMenu];
 	
+	NSMenuItem* overlaysItem = [mainMenu itemWithTitle:@"Overlays"];
+	NSMenu* overlaysMenu = overlaysItem.submenu;
+
+	NSMenuItem* saveItem = [overlaysMenu itemWithTitle:@"Save"];
+	[saveItem setTarget:self];
+	[saveItem setAction:@selector(save)];
+	
+	[m_pOverlayManager foreach:^(Overlay* o) {
+		[self createWebViewForUrl:o.url withTitle:o.title];
+	}];
 //	m_pOverlays = [[NSMutableDictionary alloc] init];
 //	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/anti666tv/blob/master/live/overlay_fiiish.html"];
-	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/osx-overlay/blob/master/sample/1.html"];
-	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/osx-overlay/blob/master/sample/2.html"];
-	[self createWebViewForUrl:@"https://streamlabs.com/alert-box/v3/YES-AS-IF" withTitle:@"Streamlabs"];
+//	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/osx-overlay/blob/master/sample/1.html"];
+//	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/osx-overlay/blob/master/sample/2.html"];
+//	[self createWebViewForUrl:@"https://streamlabs.com/alert-box/v3/YES-AS-IF" withTitle:@"Streamlabs"];
 }
 
 - (void)createWebViewForUrl:(NSString*)url {
@@ -41,6 +58,8 @@ OverlayManager* m_pOverlayManager;
 }
 - (void)createWebViewForUrl:(NSString*)url withTitle:(NSString*)title{
 	Overlay* overlay = [m_pOverlayManager findOrCreateForUrl:url];
+	
+	// :TODO: handle case where we already have a web view
 	
 	WKWebView* webView = [[WKWebView alloc] init];
 	[webView setValue:[NSNumber numberWithInt:false] forKey:@"drawsBackground"];
@@ -154,5 +173,9 @@ OverlayManager* m_pOverlayManager;
 
 - (void)menuAddOverlay:(id)sender {
 	NSLog(@":TODO: Add overlay");
+}
+
+- (IBAction)save {
+	[m_pOverlayManager save];
 }
 @end

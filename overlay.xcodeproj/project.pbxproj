@@ -47,6 +47,7 @@
 		E9D04A1E243A7EE500DE2490 /* Overlay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Overlay.m; sourceTree = "<group>"; };
 		E9D04A20243A807C00DE2490 /* OverlayManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayManager.h; sourceTree = "<group>"; };
 		E9D04A21243A807C00DE2490 /* OverlayManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OverlayManager.m; sourceTree = "<group>"; };
+		E9D04A23243A8EC500DE2490 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +65,7 @@
 		E9D049E8243A232200DE2490 = {
 			isa = PBXGroup;
 			children = (
+				E9D04A23243A8EC500DE2490 /* README.md */,
 				E9D04A1A243A5CCA00DE2490 /* sample */,
 				E9D049F3243A232200DE2490 /* overlay */,
 				E9D049F2243A232200DE2490 /* Products */,

@@ -19,6 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (Overlay*)findByTitle:(NSString*)title;
 - (Overlay*)findByWebView:(WKWebView*)webView;
 - (void)removeForUrl:(NSString*)url;
+- (void)save;
+- (BOOL)load;
+- (void)foreach:(void (^)(Overlay*))block;
 @end
 
 NS_ASSUME_NONNULL_END

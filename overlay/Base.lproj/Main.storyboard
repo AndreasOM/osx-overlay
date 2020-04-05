@@ -59,6 +59,12 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Overlays" id="ZQd-Cs-P7o">
                                     <items>
+                                        <menuItem title="Save" id="DXm-fs-KzQ" userLabel="Save">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="save:" target="Ady-hI-5gd" id="W52-lB-fou"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Add Overlay" id="gwD-pc-gGS" userLabel="Add Overlay">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                         </menuItem>

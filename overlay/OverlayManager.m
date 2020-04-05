@@ -58,4 +58,53 @@ NSMutableDictionary* m_overlays;
 	[m_overlays removeObjectForKey:url];
 }
 
+- (void)foreach:(void (^)(Overlay*))block {
+	for(NSString* key in m_overlays)
+	{
+		Overlay* o = m_overlays[key];
+		block( o );
+	}
+}
+- (void)save {
+
+	NSMutableDictionary* toSave = [[NSMutableDictionary alloc] init];
+	
+	for(NSString* key in m_overlays)
+	{
+		Overlay* o = m_overlays[key];
+		NSMutableDictionary* e = [[NSMutableDictionary alloc] init];
+//		[e setObject:o.url forKey:@"url"];	// url is key, no need to duplicate
+		[e setObject:o.title forKey:@"title"];
+		[toSave setObject:e forKey:o.url];
+	}
+	NSArray *pathArray = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask,YES);
+	NSString *documentsDirectory = [pathArray objectAtIndex:0];
+	NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"osx-overlay.plist"];
+	BOOL status = [toSave writeToFile:filePath atomically:YES];
+}
+
+- (BOOL)load {
+	NSArray *pathArray = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask,YES);
+	NSString *documentsDirectory = [pathArray objectAtIndex:0];
+	NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"osx-overlay.plist"];
+	NSDictionary *toLoad = [NSDictionary dictionaryWithContentsOfFile:filePath];
+	
+	if( toLoad == nil )
+	{
+		return NO;
+	}
+	
+	[m_overlays removeAllObjects];	// ???
+	
+	for(NSString* key in toLoad)
+	{
+		NSDictionary* e = [toLoad objectForKey:key];
+		Overlay* o = [self findOrCreateForUrl:key];
+		[o setUrl:key];
+		[o setTitle:[e objectForKey:@"title"]];
+	}
+	
+	return YES;
+}
+
 @end

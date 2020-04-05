@@ -1,7 +1,7 @@
 # Hack
 
-Adds a transparent web view over the OSX desktop.
+Adds one or more transparent web views over the OSX desktop.
 
 # TODO
-[ ] Add preferences to allow setting URL(s)
-
+[ ] Add window to allow adding/editing URLs
+[ ] Actually destroy web view when unticking in menu
