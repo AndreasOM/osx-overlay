@@ -39,6 +39,7 @@
 		E9D04A15243A33F600DE2490 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		E9D04A17243A41B400DE2490 /* TransparentWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TransparentWindowController.h; sourceTree = "<group>"; };
 		E9D04A18243A41B400DE2490 /* TransparentWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TransparentWindowController.m; sourceTree = "<group>"; };
+		E9D04A1B243A5CE900DE2490 /* 1.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = 1.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +57,7 @@
 		E9D049E8243A232200DE2490 = {
 			isa = PBXGroup;
 			children = (
+				E9D04A1A243A5CCA00DE2490 /* sample */,
 				E9D049F3243A232200DE2490 /* overlay */,
 				E9D049F2243A232200DE2490 /* Products */,
 				E9D04A14243A33F600DE2490 /* Frameworks */,
@@ -100,6 +102,14 @@
 				E9D04A15243A33F600DE2490 /* WebKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E9D04A1A243A5CCA00DE2490 /* sample */ = {
+			isa = PBXGroup;
+			children = (
+				E9D04A1B243A5CE900DE2490 /* 1.html */,
+			);
+			path = sample;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
