@@ -16,6 +16,7 @@
 		E9D04A10243A26C500DE2490 /* TransparentWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D04A0F243A26C500DE2490 /* TransparentWindow.m */; };
 		E9D04A13243A314400DE2490 /* TransparentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D04A12243A314400DE2490 /* TransparentViewController.m */; };
 		E9D04A16243A33F600DE2490 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9D04A15243A33F600DE2490 /* WebKit.framework */; };
+		E9D04A19243A41B400DE2490 /* TransparentWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D04A18243A41B400DE2490 /* TransparentWindowController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,8 @@
 		E9D04A11243A314400DE2490 /* TransparentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TransparentViewController.h; sourceTree = "<group>"; };
 		E9D04A12243A314400DE2490 /* TransparentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TransparentViewController.m; sourceTree = "<group>"; };
 		E9D04A15243A33F600DE2490 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		E9D04A17243A41B400DE2490 /* TransparentWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TransparentWindowController.h; sourceTree = "<group>"; };
+		E9D04A18243A41B400DE2490 /* TransparentWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TransparentWindowController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +81,8 @@
 				E9D049FC243A232400DE2490 /* Main.storyboard */,
 				E9D04A0E243A26C500DE2490 /* TransparentWindow.h */,
 				E9D04A0F243A26C500DE2490 /* TransparentWindow.m */,
+				E9D04A17243A41B400DE2490 /* TransparentWindowController.h */,
+				E9D04A18243A41B400DE2490 /* TransparentWindowController.m */,
 				E9D049FF243A232400DE2490 /* Info.plist */,
 				E9D04A11243A314400DE2490 /* TransparentViewController.h */,
 				E9D04A12243A314400DE2490 /* TransparentViewController.m */,
@@ -167,6 +172,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E9D04A10243A26C500DE2490 /* TransparentWindow.m in Sources */,
+				E9D04A19243A41B400DE2490 /* TransparentWindowController.m in Sources */,
 				E9D049F9243A232200DE2490 /* ViewController.m in Sources */,
 				E9D04A0A243A23BC00DE2490 /* TransparentView.m in Sources */,
 				E9D04A01243A232400DE2490 /* main.m in Sources */,
