@@ -17,27 +17,24 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do view setup here.
 	
-//	[self.view setFrame:[[NSScreen mainScreen] visibleFrame]];
 	[self.view setFrame:[[NSScreen mainScreen] frame]];
 
-//	self.webView = [[WKWebView alloc] init];
-//	self.webView.isOpaque = false;
-//	self.webView.backgroundColor = [NSColor greenColor];
-	[self.webView setValue:[NSNumber numberWithInt:false] forKey:@"drawsBackground"];
-//	[self.webView.enclosingScrollView.]
+	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/anti666tv/blob/master/live/overlay_fiiish.html"];
+}
+
+- (void)createWebViewForUrl:(NSString*)url {
+	WKWebView* webView = [[WKWebView alloc] init];
+	[webView setValue:[NSNumber numberWithInt:false] forKey:@"drawsBackground"];
+	webView.frame = self.view.bounds;
+	[self.view addSubview:webView];
 	
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-//		NSLog(@"parameter1: %d parameter2: %f", parameter1, parameter2);
-		NSLog(@"Loading...");
-//		[self.webView setValue:false forKey:@"isOpaque"];
-//		NSURL* url = [NSURL URLWithString:@"http://fiiish.omnimad.net/"];
-		NSURL* url = [NSURL URLWithString:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/anti666tv/blob/master/live/overlay_fiiish.html"];
-		NSURLRequest* request = [NSURLRequest requestWithURL:url];
-		[self.webView loadRequest:request];
+		NSLog(@"Loading... %@", url);
+		NSURL* urlUrl = [NSURL URLWithString:url];
+		NSURLRequest* request = [NSURLRequest requestWithURL:urlUrl];
+		[webView loadRequest:request];
 	});
-
 }
 
 @end
