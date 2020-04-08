@@ -8,15 +8,21 @@
 
 #import "TransparentViewController.h"
 
+#import "MidiInput.h"
+
 #import "Overlay.h"
 #import "OverlayManager.h"
 
+
 @interface TransparentViewController ()
+
+@property OverlayConfigWindowController* overlayConfigWindowController;
 
 @end
 
 //NSMutableDictionary* m_pOverlays;
 
+MidiInput*		m_pMidiInput;
 OverlayManager* m_pOverlayManager;
 
 //@synthesize
@@ -46,11 +52,55 @@ OverlayManager* m_pOverlayManager;
 	[m_pOverlayManager foreach:^(Overlay* o) {
 		[self createWebViewForUrl:o.url withTitle:o.title];
 	}];
-//	m_pOverlays = [[NSMutableDictionary alloc] init];
-//	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/anti666tv/blob/master/live/overlay_fiiish.html"];
-//	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/osx-overlay/blob/master/sample/1.html"];
-//	[self createWebViewForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/osx-overlay/blob/master/sample/2.html"];
-//	[self createWebViewForUrl:@"https://streamlabs.com/alert-box/v3/YES-AS-IF" withTitle:@"Streamlabs"];
+	
+	[[m_pOverlayManager findOrCreateForUrl:@"file:///Users/anti/data/work/anti666tv/anti666tv/live/overlay_fiiish.html"] setTitle:@"Fiiish! [local]"];
+
+	m_pMidiInput = [[MidiInput alloc] init];
+	
+	[m_pMidiInput sendNoteOn:0x0c withVelocity:0x7f onChannel:0]; // enter extended mode // Note: Should be 15, but that seems broken
+	[m_pMidiInput sendNoteOn:96 withVelocity:16 onChannel:0];
+	for( int ch = 0; ch <= 15; ++ch )
+	{
+		[m_pMidiInput sendNoteOn:96 withVelocity:1 onChannel:ch];
+	}
+//	[m_pMidiInput sendNoteOn:96 withVelocity:1 onChannel:1]; // flash
+//	[m_pMidiInput sendNoteOn:96 withVelocity:1 onChannel:3]; // pulse
+/*
+	[m_pMidiInput sendNoteOn:96 withVelocity:1 onChannel:0]; // pulse
+	[m_pMidiInput sendNoteOn:96 withVelocity:1 onChannel:1]; // pulse
+	[m_pMidiInput sendNoteOn:96 withVelocity:1 onChannel:2]; // pulse
+	[m_pMidiInput sendNoteOn:96 withVelocity:1 onChannel:3]; // pulse
+	[m_pMidiInput sendNoteOn:96 withVelocity:1 onChannel:4]; // pulse
+	[m_pMidiInput sendNoteOn:96 withVelocity:1 onChannel:5]; // pulse
+	[m_pMidiInput sendNoteOn:96 withVelocity:1 onChannel:6]; // pulse
+	[m_pMidiInput sendNoteOn:96 withVelocity:1 onChannel:7]; // pulse
+*/
+	[m_pMidiInput registerNoteOnBlock:^(unsigned char note) {
+		NSLog(@"Note ON: %d", note );
+		switch( note )
+		{
+			case 96:	// 1 on my novation launchkey mini
+				{
+					int c = arc4random_uniform(127);
+					[m_pMidiInput sendNoteOn:96 withVelocity:c onChannel:0]; //color feedback
+					// velocity: 1 = red, 16 = green, 51 = orange
+//					[m_pMidiInput sendNoteOn:96 withVelocity:51 onChannel:16]; //color feedback
+				}
+				break;
+			default:
+				{
+					if( note >= 0 && note <= 120 && note != 0x0c )
+					{
+						int c = arc4random_uniform(127);
+						[m_pMidiInput sendNoteOn:note withVelocity:c onChannel:0]; //color feedback
+						dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+							[m_pMidiInput sendNoteOn:note withVelocity:0 onChannel:0]; //color feedback
+						});
+					}
+				}
+				break;
+		}
+	}];
 }
 
 - (void)createWebViewForUrl:(NSString*)url {
@@ -79,6 +129,12 @@ OverlayManager* m_pOverlayManager;
 			[overlay.webView loadRequest:request];
 		}
 	});
+	[self addOverlayToMenu:overlay];
+}
+
+- (void)addOverlayToMenu:(Overlay*)overlay {
+	NSString* title = overlay.title;
+	
 	NSMenu* mainMenu = [[NSApplication sharedApplication] mainMenu];
 	
 	NSMenuItem* overlaysItem = [mainMenu itemWithTitle:@"Overlays"];
@@ -90,6 +146,7 @@ OverlayManager* m_pOverlayManager;
 	[[menuItemMenu addItemWithTitle:@"Reload" action:@selector(menuUrlReload:) keyEquivalent:@""] setTarget:self];
 //	[[menuItemMenu addItemWithTitle:@"Toggle" action:@selector(menuUrlToggle:) keyEquivalent:@""] setTarget:self];
 	[[menuItemMenu addItemWithTitle:@"Remove" action:@selector(menuUrlRemove:) keyEquivalent:@""] setTarget:self];
+	[[menuItemMenu addItemWithTitle:@"Edit" action:@selector(menuUrlEdit:) keyEquivalent:@""] setTarget:self];
 	[menuItem setState: NSControlStateValueOn];
 	[overlaysMenu addItem:menuItem];
 	[overlaysMenu setSubmenu:menuItemMenu forItem:menuItem];
@@ -153,6 +210,20 @@ OverlayManager* m_pOverlayManager;
 	}
 }
 
+- (void)menuUrlEdit:(id)sender {
+	NSMenuItem* menuItem = (NSMenuItem*)sender;
+	NSLog(@"Edit %@", menuItem.parentItem.title);
+	if( !_overlayConfigWindowController ) {
+		Overlay* overlay = [self findOverlayForMenuItem:menuItem.parentItem];
+		if( overlay != nil ) {
+			_overlayConfigWindowController =[[OverlayConfigWindowController alloc] initWithWindowNibName:@"OverlayConfigWindowController"];
+			[_overlayConfigWindowController setOverlay:overlay];
+			[_overlayConfigWindowController setDelegate:self];
+			[_overlayConfigWindowController showWindow:self];
+		}
+	}
+}
+
 - (void)deleteEntryByWebView:(WKWebView*)webView {
 	Overlay* overlay = [m_pOverlayManager findByWebView:webView];
 	[m_pOverlayManager removeForUrl:overlay.url];
@@ -171,6 +242,20 @@ OverlayManager* m_pOverlayManager;
 	return overlay.webView;
 }
 
+- (Overlay*)findOverlayForMenuItem:(NSMenuItem*)menuItem {
+	Overlay* overlay = [m_pOverlayManager findByUrl:menuItem.title];
+	if( overlay == nil )
+	{
+		overlay = [m_pOverlayManager findByTitle:menuItem.title];
+		if( overlay == nil )
+		{
+			return nil;
+		}
+	}
+	
+	return overlay;
+}
+
 - (void)menuAddOverlay:(id)sender {
 	NSLog(@":TODO: Add overlay");
 }
@@ -178,4 +263,33 @@ OverlayManager* m_pOverlayManager;
 - (IBAction)save {
 	[m_pOverlayManager save];
 }
+
+- (void)overlayChangeCanceled:(Overlay *)overlay {
+	[_overlayConfigWindowController close];
+	_overlayConfigWindowController = nil;
+}
+
+- (void)overlayChanged:(Overlay *)newOverlay was:(Overlay *)oldOverlay {
+	NSLog( @"overlayChanged" );
+	[_overlayConfigWindowController close];
+	_overlayConfigWindowController = nil;
+	Overlay* overlay = nil;
+	if( oldOverlay.url != nil ) {
+		if( ![oldOverlay.url isEqualTo:newOverlay.url] ) {
+			// url changed, so the key changed
+			[m_pOverlayManager removeForUrl:oldOverlay.url];
+			overlay = [m_pOverlayManager findOrCreateForUrl:newOverlay.url];
+		} else {
+			// url is the same, so reuse entry
+			overlay = [m_pOverlayManager findByUrl:oldOverlay.url];
+		}
+	} else {
+		overlay = [m_pOverlayManager findOrCreateForUrl:overlay.url];
+	}
+	if( overlay != nil ) {
+		[overlay setTitle:newOverlay.title];
+	}
+	
+}
+
 @end

@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Overlay : NSObject
+@interface Overlay : NSObject <NSCopying, NSMutableCopying>
 
 @property NSString*		url;
 @property NSString*		title;
@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (id)createWithUrl:(NSString*)url;
 - (id)initWithUrl:(NSString*)url andTitle:(NSString*)title;
+- (bool)isEqualTo:(Overlay*)overlay;
 
 @end
 

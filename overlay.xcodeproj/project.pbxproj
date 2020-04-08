@@ -19,6 +19,9 @@
 		E9D04A19243A41B400DE2490 /* TransparentWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D04A18243A41B400DE2490 /* TransparentWindowController.m */; };
 		E9D04A1F243A7EE500DE2490 /* Overlay.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D04A1E243A7EE500DE2490 /* Overlay.m */; };
 		E9D04A22243A807C00DE2490 /* OverlayManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D04A21243A807C00DE2490 /* OverlayManager.m */; };
+		E9D04A26243A952400DE2490 /* MidiInput.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D04A25243A952400DE2490 /* MidiInput.m */; };
+		E9D04A54243E735700DE2490 /* OverlayConfigWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D04A52243E735700DE2490 /* OverlayConfigWindowController.m */; };
+		E9D04A55243E735700DE2490 /* OverlayConfigWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9D04A53243E735700DE2490 /* OverlayConfigWindowController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +51,11 @@
 		E9D04A20243A807C00DE2490 /* OverlayManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayManager.h; sourceTree = "<group>"; };
 		E9D04A21243A807C00DE2490 /* OverlayManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OverlayManager.m; sourceTree = "<group>"; };
 		E9D04A23243A8EC500DE2490 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		E9D04A24243A952400DE2490 /* MidiInput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MidiInput.h; sourceTree = "<group>"; };
+		E9D04A25243A952400DE2490 /* MidiInput.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MidiInput.m; sourceTree = "<group>"; };
+		E9D04A51243E735700DE2490 /* OverlayConfigWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayConfigWindowController.h; sourceTree = "<group>"; };
+		E9D04A52243E735700DE2490 /* OverlayConfigWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OverlayConfigWindowController.m; sourceTree = "<group>"; };
+		E9D04A53243E735700DE2490 /* OverlayConfigWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OverlayConfigWindowController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +97,9 @@
 				E9D049F7243A232200DE2490 /* ViewController.h */,
 				E9D049F8243A232200DE2490 /* ViewController.m */,
 				E9D049FA243A232400DE2490 /* Assets.xcassets */,
+				E9D04A51243E735700DE2490 /* OverlayConfigWindowController.h */,
+				E9D04A52243E735700DE2490 /* OverlayConfigWindowController.m */,
+				E9D04A53243E735700DE2490 /* OverlayConfigWindowController.xib */,
 				E9D049FC243A232400DE2490 /* Main.storyboard */,
 				E9D04A0E243A26C500DE2490 /* TransparentWindow.h */,
 				E9D04A0F243A26C500DE2490 /* TransparentWindow.m */,
@@ -105,6 +116,8 @@
 				E9D04A1E243A7EE500DE2490 /* Overlay.m */,
 				E9D04A20243A807C00DE2490 /* OverlayManager.h */,
 				E9D04A21243A807C00DE2490 /* OverlayManager.m */,
+				E9D04A24243A952400DE2490 /* MidiInput.h */,
+				E9D04A25243A952400DE2490 /* MidiInput.m */,
 			);
 			path = overlay;
 			sourceTree = "<group>";
@@ -185,6 +198,7 @@
 			files = (
 				E9D049FB243A232400DE2490 /* Assets.xcassets in Resources */,
 				E9D049FE243A232400DE2490 /* Main.storyboard in Resources */,
+				E9D04A55243E735700DE2490 /* OverlayConfigWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,7 +209,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9D04A54243E735700DE2490 /* OverlayConfigWindowController.m in Sources */,
 				E9D04A10243A26C500DE2490 /* TransparentWindow.m in Sources */,
+				E9D04A26243A952400DE2490 /* MidiInput.m in Sources */,
 				E9D04A19243A41B400DE2490 /* TransparentWindowController.m in Sources */,
 				E9D049F9243A232200DE2490 /* ViewController.m in Sources */,
 				E9D04A0A243A23BC00DE2490 /* TransparentView.m in Sources */,
