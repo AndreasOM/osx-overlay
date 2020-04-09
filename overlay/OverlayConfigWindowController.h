@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 - (void)overlayChanged:(Overlay *)overlay was:(Overlay *)oldOverlay;
 - (void)overlayChangeCanceled:(Overlay *)overlay;
+- (void)overlayPositionChanged:(Overlay *)overlay;
 @end
 
 @interface OverlayConfigWindowController : NSWindowController
@@ -26,12 +27,16 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak) IBOutlet NSButton *saveButton;
 @property (weak) IBOutlet NSButton *showUrlCheckBox;
 @property (weak) IBOutlet NSButton *cancelButton;
+@property (weak) IBOutlet NSTextField *positionXTextField;
+@property (weak) IBOutlet NSTextField *positionYTextField;
 
 - (IBAction)labelChanged:(NSTextField *)sender;
 - (IBAction)urlChanged:(NSTextField *)sender;
 - (IBAction)saveButtonClicked:(NSButton *)sender;
 - (IBAction)showUrlToggled:(NSButton *)sender;
 - (IBAction)cancelButtonClicked:(NSButton *)sender;
+- (IBAction)positionXChanged:(NSTextField *)sender;
+- (IBAction)positionYChanged:(id)sender;
 
 - (void)setOverlay:(Overlay *)overlay;
 

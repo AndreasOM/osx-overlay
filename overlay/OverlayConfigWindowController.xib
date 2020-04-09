@@ -9,6 +9,8 @@
             <connections>
                 <outlet property="cancelButton" destination="6iL-4L-z3h" id="Msc-gE-c4b"/>
                 <outlet property="labelTextField" destination="lMc-vH-tqT" id="ovv-zo-aQq"/>
+                <outlet property="positionXTextField" destination="z56-Zq-PK1" id="1Ow-H3-pCb"/>
+                <outlet property="positionYTextField" destination="Ltc-A6-5PA" id="J9k-FQ-8Vo"/>
                 <outlet property="saveButton" destination="OxT-oY-8OH" id="s2H-pl-fda"/>
                 <outlet property="showUrlCheckBox" destination="ht6-wi-t0u" id="c4q-uB-7RI"/>
                 <outlet property="startupStateComboBox" destination="k7g-SM-Gnh" id="ytT-2F-Cz6"/>
@@ -96,6 +98,32 @@ Gw
                             <action selector="cancelButtonClicked:" target="-2" id="u7M-D7-S4s"/>
                         </connections>
                     </button>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="z56-Zq-PK1">
+                        <rect key="frame" x="20" y="89" width="96" height="21"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="6fl-RX-R54">
+                            <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" formatWidth="-1" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="UVD-9K-dbk"/>
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <action selector="positionXChanged:" target="-2" id="EEt-zS-iz5"/>
+                        </connections>
+                    </textField>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ltc-A6-5PA">
+                        <rect key="frame" x="124" y="89" width="96" height="21"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="B9z-KP-2Bx">
+                            <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" formatWidth="-1" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="Z4a-1J-ob1"/>
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <action selector="positionYChanged:" target="-2" id="fcb-Lt-Ymo"/>
+                        </connections>
+                    </textField>
                 </subviews>
             </view>
             <connections>

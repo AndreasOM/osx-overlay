@@ -17,11 +17,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property NSString*		url;
 @property NSString*		title;
 @property WKWebView*	webView;
+@property NSPoint		position;
 
 + (id)createWithUrl:(NSString*)url;
 - (id)initWithUrl:(NSString*)url andTitle:(NSString*)title;
-- (bool)isEqualTo:(Overlay*)overlay;
-
+- (bool)isEqualTo:(nullable Overlay*)overlay;
+- (void)setPositionX:(NSInteger)x;
+- (void)setPositionY:(NSInteger)y;
 @end
 
 NS_ASSUME_NONNULL_END

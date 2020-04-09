@@ -30,6 +30,9 @@
 	[self.startupStateComboBox addItemWithObjectValue:@"Last"];
 	[self.startupStateComboBox selectItemWithObjectValue:@"Last"];
 	
+	[self.positionXTextField setIntegerValue:self.modifiedOverlay.position.x];
+	[self.positionYTextField setIntegerValue:self.modifiedOverlay.position.y];
+
 	[self showUrlToggled:self.showUrlCheckBox];
 	[self onModification];
 }
@@ -87,10 +90,35 @@
 	self.modifiedOverlay = [_overlay mutableCopy];
 }
 
+- (IBAction)positionYChanged:(id)sender {
+	NSInteger posY = [self.positionYTextField integerValue];
+	if( posY != self.modifiedOverlay.position.y ) {
+		[self.modifiedOverlay setPositionY:posY];
+		[self onModification];
+		[self onPositionChanged];
+	}
+}
+
+- (IBAction)positionXChanged:(NSTextField *)sender {
+	NSInteger posX = [self.positionXTextField integerValue];
+	if( posX != self.modifiedOverlay.position.x ) {
+		[self.modifiedOverlay setPositionX:posX];
+		[self onModification];
+		[self onPositionChanged];
+	}
+}
+
 - (IBAction)cancelButtonClicked:(NSButton *)sender {
 	if( [delegate respondsToSelector:@selector(overlayChangeCanceled:)] ){
 		[self.delegate overlayChangeCanceled:self.overlay];
 	}
+}
+
+- (void)onPositionChanged {
+	if( [delegate respondsToSelector:@selector(overlayPositionChanged:)] ){
+		[self.delegate overlayPositionChanged:self.modifiedOverlay];
+	}
+
 }
 
 @end

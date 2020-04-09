@@ -104,11 +104,45 @@ OverlayManager* m_pOverlayManager;
 	Overlay* overlay = [m_pOverlayManager findOrCreateForUrl:url];
 	
 	// :TODO: handle case where we already have a web view
+
+//	NSRect rect = NSOffsetRect( self.view.bounds, overlay.position.x, overlay.position.y );
+//							   rect = NSIntersectionRect( rect, self.view.bounds );
 	
-	WKWebView* webView = [[WKWebView alloc] init];
+	NSRect rect = self.view.bounds;
+	
+	if( overlay.position.y > 0 ) {
+		rect.origin.y += overlay.position.y;
+		rect.size.height -= overlay.position.y;
+	} else {
+		rect.size.height += overlay.position.y; // this value is negative!
+	}
+	
+	NSLog(@"Rect for %@: %f,%f | %fx%f", overlay.title, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height );
+	
+//	rect.origin.x = 400;
+//	rect.size.width = 800;
+
+/*
+	rect.origin.x = 400;
+	rect.origin.x = 100;
+	rect.size.width = 800;
+	rect.size.height = 900;
+*/
+//	NSView* subView = [[NSView alloc] initWithFrame:rect];
+//	[self.view addSubview:subView];
+
+	WKWebView* webView = [[WKWebView alloc] initWithFrame:rect];
 	[webView setValue:[NSNumber numberWithInt:false] forKey:@"drawsBackground"];
-	webView.frame = self.view.bounds;
+
+	webView.frame = rect;
+	[webView setTranslatesAutoresizingMaskIntoConstraints:NO];
+	webView.navigationDelegate = self;
+//	[webView reload];
+//	[webView setFrameOrigin:overlay.position];
+//	[webView setBoundsOrigin:overlay.position];
 	[self.view addSubview:webView];
+//	[subView addSubview:webView];
+	
 	
 	[overlay setWebView:webView];
 	[overlay setTitle:title];
@@ -327,11 +361,30 @@ OverlayManager* m_pOverlayManager;
 	}
 	if( overlay != nil ) {
 		[overlay setTitle:newOverlay.title];
+		[overlay setPositionX:newOverlay.position.x];
+		[overlay setPositionY:newOverlay.position.y];
 	}
 	if( titleChanged ) {
 		[self rebuildMenu];	// :TODO: could probably just patch the old entry
 	}
 	
 }
+
+- (void)overlayPositionChanged:(Overlay *)overlay {
+	NSLog(@"overlayPositionChanged to %f, %f", overlay.position.x, overlay.position.y );
+	Overlay* o = [m_pOverlayManager findByUrl:overlay.url];
+	WKWebView* w = o.webView;
+	if( w == nil ) {
+		NSLog(@"No webView for position change" );
+	}
+	[w setFrameOrigin:overlay.position];
+	[w setNeedsDisplay: true];
+	[w reload];
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation{
+	NSLog(@"didFinishNavigation");
+}
+
 
 @end

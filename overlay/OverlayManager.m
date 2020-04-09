@@ -78,6 +78,8 @@ NSMutableDictionary* m_overlays;
 		NSMutableDictionary* e = [[NSMutableDictionary alloc] init];
 //		[e setObject:o.url forKey:@"url"];	// url is key, no need to duplicate
 		[e setObject:o.title forKey:@"title"];
+		[e setObject:[NSNumber numberWithFloat:o.position.x] forKey:@"posX"];
+		[e setObject:[NSNumber numberWithFloat:o.position.y] forKey:@"posY"];
 		[toSave setObject:e forKey:o.url];
 	}
 	NSArray *pathArray = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask,YES);
@@ -105,6 +107,9 @@ NSMutableDictionary* m_overlays;
 		Overlay* o = [self findOrCreateForUrl:key];
 		[o setUrl:key];
 		[o setTitle:[e objectForKey:@"title"]];
+		NSNumber* posX = [e objectForKey:@"posX"];
+		NSNumber* posY = [e objectForKey:@"posY"];
+		o.position = NSMakePoint( [posX floatValue], [posY floatValue]);
 	}
 	
 	return YES;

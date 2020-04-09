@@ -14,7 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface TransparentViewController : NSViewController <OverlayConfigWindowControllerDelegate> {
+@interface TransparentViewController : NSViewController <OverlayConfigWindowControllerDelegate, WKNavigationDelegate> {
 }
 
 @property(nonatomic,strong) IBOutlet WKWebView *webView;
