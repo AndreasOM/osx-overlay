@@ -11,6 +11,9 @@
 NSMutableDictionary* m_overlays;
 
 @implementation OverlayManager
+- (NSUInteger)count {
+	return [m_overlays count];
+}
 -(Overlay*)findOrCreateForUrl:(NSString *)url {
 	if( m_overlays == nil )
 	{

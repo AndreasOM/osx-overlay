@@ -40,20 +40,14 @@ OverlayManager* m_pOverlayManager;
 		[[m_pOverlayManager findOrCreateForUrl:@"https://htmlpreview.github.io/?https://github.com/AndreasOM/osx-overlay/blob/master/sample/2.html"] setTitle:@"Sample 2"];
 	}
 
-	NSMenu* mainMenu = [[NSApplication sharedApplication] mainMenu];
-	
-	NSMenuItem* overlaysItem = [mainMenu itemWithTitle:@"Overlays"];
-	NSMenu* overlaysMenu = overlaysItem.submenu;
-
-	NSMenuItem* saveItem = [overlaysMenu itemWithTitle:@"Save"];
-	[saveItem setTarget:self];
-	[saveItem setAction:@selector(save)];
 	
 	[m_pOverlayManager foreach:^(Overlay* o) {
 		[self createWebViewForUrl:o.url withTitle:o.title];
 	}];
 	
 	[[m_pOverlayManager findOrCreateForUrl:@"file:///Users/anti/data/work/anti666tv/anti666tv/live/overlay_fiiish.html"] setTitle:@"Fiiish! [local]"];
+
+	[self rebuildMenu];
 
 	m_pMidiInput = [[MidiInput alloc] init];
 	
@@ -129,7 +123,38 @@ OverlayManager* m_pOverlayManager;
 			[overlay.webView loadRequest:request];
 		}
 	});
-	[self addOverlayToMenu:overlay];
+}
+
+- (void)rebuildMenu {
+	// :TODO: probably could just patch up the menu
+	NSMenu* mainMenu = [[NSApplication sharedApplication] mainMenu];
+	
+	NSMenuItem* overlaysItem = [mainMenu itemWithTitle:@"Overlays"];
+	NSMenu* overlaysMenu = overlaysItem.submenu;
+//	NSMenu* overlaysMenu = [[NSMenu alloc] init];
+
+	NSMenuItem* saveItem = [overlaysMenu itemWithTitle:@"Save"];
+	[saveItem setTarget:self];
+	[saveItem setAction:@selector(save)];
+
+	NSMenuItem* addOverlayItem = [overlaysMenu itemWithTitle:@"Add Overlay"];
+	[addOverlayItem setTarget:self];
+	[addOverlayItem setAction:@selector(addOverlay)];
+
+	[m_pOverlayManager foreach:^(Overlay* overlay) {
+		NSInteger index = [overlaysMenu indexOfItemWithRepresentedObject:overlay];
+		if( index >= 0 ) {	// old overlay
+			// ensure title is correct
+			NSMenuItem* oi = [overlaysMenu itemAtIndex:index];
+			if( ![oi.title isEqualToString:overlay.title] ) {
+				[oi setTitle:overlay.title];
+			}
+		} else {			// new overlay
+			[self addOverlayToMenu:overlay];
+		}
+	}];
+	
+	// does not remove old entries!
 }
 
 - (void)addOverlayToMenu:(Overlay*)overlay {
@@ -148,6 +173,7 @@ OverlayManager* m_pOverlayManager;
 	[[menuItemMenu addItemWithTitle:@"Remove" action:@selector(menuUrlRemove:) keyEquivalent:@""] setTarget:self];
 	[[menuItemMenu addItemWithTitle:@"Edit" action:@selector(menuUrlEdit:) keyEquivalent:@""] setTarget:self];
 	[menuItem setState: NSControlStateValueOn];
+	[menuItem setRepresentedObject:overlay];
 	[overlaysMenu addItem:menuItem];
 	[overlaysMenu setSubmenu:menuItemMenu forItem:menuItem];
 }
@@ -264,6 +290,18 @@ OverlayManager* m_pOverlayManager;
 	[m_pOverlayManager save];
 }
 
+- (IBAction)addOverlay {
+	if( !_overlayConfigWindowController ) {
+		Overlay* overlay = [[Overlay alloc] init];
+		if( overlay != nil ) {
+			_overlayConfigWindowController =[[OverlayConfigWindowController alloc] initWithWindowNibName:@"OverlayConfigWindowController"];
+			[_overlayConfigWindowController setOverlay:overlay];
+			[_overlayConfigWindowController setDelegate:self];
+			[_overlayConfigWindowController showWindow:self];
+		}
+	}
+}
+
 - (void)overlayChangeCanceled:(Overlay *)overlay {
 	[_overlayConfigWindowController close];
 	_overlayConfigWindowController = nil;
@@ -274,6 +312,7 @@ OverlayManager* m_pOverlayManager;
 	[_overlayConfigWindowController close];
 	_overlayConfigWindowController = nil;
 	Overlay* overlay = nil;
+	bool titleChanged = ![oldOverlay.title isEqualTo:newOverlay.title];
 	if( oldOverlay.url != nil ) {
 		if( ![oldOverlay.url isEqualTo:newOverlay.url] ) {
 			// url changed, so the key changed
@@ -284,10 +323,13 @@ OverlayManager* m_pOverlayManager;
 			overlay = [m_pOverlayManager findByUrl:oldOverlay.url];
 		}
 	} else {
-		overlay = [m_pOverlayManager findOrCreateForUrl:overlay.url];
+		overlay = [m_pOverlayManager findOrCreateForUrl:newOverlay.url];
 	}
 	if( overlay != nil ) {
 		[overlay setTitle:newOverlay.title];
+	}
+	if( titleChanged ) {
+		[self rebuildMenu];	// :TODO: could probably just patch the old entry
 	}
 	
 }
