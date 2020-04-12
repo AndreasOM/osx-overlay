@@ -16,6 +16,15 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 	// Insert code here to initialize your application
+	NSRect frame = [[NSScreen mainScreen] frame];
+
+	{
+		NSWindow *window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,100,100)
+		styleMask:NSTitledWindowMask
+		  backing:NSBackingStoreBuffered
+			defer:YES
+		   screen:nil];
+	}
 }
 
 

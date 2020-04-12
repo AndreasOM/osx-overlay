@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E938AD9D244081A200E48387 /* TransparentWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = E938AD9C244081A200E48387 /* TransparentWebView.m */; };
 		E9D049F6243A232200DE2490 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D049F5243A232200DE2490 /* AppDelegate.m */; };
 		E9D049F9243A232200DE2490 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D049F8243A232200DE2490 /* ViewController.m */; };
 		E9D049FB243A232400DE2490 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9D049FA243A232400DE2490 /* Assets.xcassets */; };
@@ -25,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E938AD9B244081A200E48387 /* TransparentWebView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TransparentWebView.h; sourceTree = "<group>"; };
+		E938AD9C244081A200E48387 /* TransparentWebView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TransparentWebView.m; sourceTree = "<group>"; };
 		E9D049F1243A232200DE2490 /* overlay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = overlay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9D049F4243A232200DE2490 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E9D049F5243A232200DE2490 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -118,6 +121,8 @@
 				E9D04A21243A807C00DE2490 /* OverlayManager.m */,
 				E9D04A24243A952400DE2490 /* MidiInput.h */,
 				E9D04A25243A952400DE2490 /* MidiInput.m */,
+				E938AD9B244081A200E48387 /* TransparentWebView.h */,
+				E938AD9C244081A200E48387 /* TransparentWebView.m */,
 			);
 			path = overlay;
 			sourceTree = "<group>";
@@ -218,6 +223,7 @@
 				E9D04A22243A807C00DE2490 /* OverlayManager.m in Sources */,
 				E9D04A01243A232400DE2490 /* main.m in Sources */,
 				E9D049F6243A232200DE2490 /* AppDelegate.m in Sources */,
+				E938AD9D244081A200E48387 /* TransparentWebView.m in Sources */,
 				E9D04A1F243A7EE500DE2490 /* Overlay.m in Sources */,
 				E9D04A13243A314400DE2490 /* TransparentViewController.m in Sources */,
 			);

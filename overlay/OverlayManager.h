@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface OverlayManager : NSObject
 - (NSUInteger)count;
+- (bool)insert:(Overlay*)overlay;
 - (Overlay*)findOrCreateForUrl:(NSString*)url;
 - (Overlay*)findByUrl:(NSString*)url;
 - (Overlay*)findByTitle:(NSString*)title;

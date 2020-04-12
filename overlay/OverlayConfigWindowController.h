@@ -37,6 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (IBAction)cancelButtonClicked:(NSButton *)sender;
 - (IBAction)positionXChanged:(NSTextField *)sender;
 - (IBAction)positionYChanged:(id)sender;
+- (IBAction)startupStateComboBoxChanged:(NSComboBox *)sender;
 
 - (void)setOverlay:(Overlay *)overlay;
 

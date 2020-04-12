@@ -13,6 +13,7 @@
 #import "Overlay.h"
 #import "OverlayManager.h"
 
+#import "TransparentWebView.h"
 
 @interface TransparentViewController ()
 
@@ -28,11 +29,51 @@ OverlayManager* m_pOverlayManager;
 //@synthesize
 @implementation TransparentViewController
 
++ (NSRect)insetRect:(NSRect)rect insetX:(int)insetX insetY:(int)insetY {
+	NSRect outRect = NSMakeRect( rect.origin.x+insetX, rect.origin.y+insetY, rect.size.width - 2*insetX, rect.size.height - 2*insetY );
+	
+	return outRect;
+}
++ (NSRect)outsetRect:(NSRect)rect insetX:(int)insetX insetY:(int)insetY {
+	NSRect outRect = NSMakeRect( rect.origin.x-insetX, rect.origin.y-insetY, rect.size.width + 2*insetX, rect.size.height + 2*insetY );
+	
+	return outRect;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
 	[self.view setFrame:[[NSScreen mainScreen] frame]];
+	
+	// :TEST:
+	if( false )
+	{
+		NSRect rect = self.view.bounds;
+		rect.origin.x = rect.origin.x + 0.5f*( rect.size.width );
+		rect.origin.y = rect.origin.y + 0.5f*( rect.size.height );
+		rect.size.width = 0;
+		rect.size.height = 0;
+		
+		rect = [TransparentViewController outsetRect:rect insetX:5*16 insetY:5*9];
 
+		rect = NSMakeRect( 0, 0, 160, 90);
+		NSArray* colors = [NSArray arrayWithObjects: [NSColor redColor], [NSColor greenColor], [NSColor yellowColor], [NSColor blackColor], nil ];
+		for( int i = 0; i < 10; ++i ) {
+		for( NSColor* color in colors ) {
+			NSLog(@"Rect for %p: %f,%f | %fx%f", color, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height );
+			TransparentWebView* webView = [[TransparentWebView alloc] initWithFrame:rect];
+			[webView setBackgroundColor:color];
+			[self.view addSubview:webView];
+//			rect = [TransparentViewController insetRect:rect insetX:16 insetY:9];
+			rect.origin.x += 32;
+			rect.origin.y += 18;
+			rect.size.width += 32;
+			rect.size.height += 18;
+		}
+			rect.origin.x -= 32;
+			rect.size.width -= 32;
+		}
+		return;
+	}
 	m_pOverlayManager = [[OverlayManager alloc] init];
 	if( ![m_pOverlayManager load] )
 	{
@@ -97,11 +138,17 @@ OverlayManager* m_pOverlayManager;
 	}];
 }
 
+// the next two are legacy wrappers :TODO: remove
 - (void)createWebViewForUrl:(NSString*)url {
 	[self createWebViewForUrl:url withTitle:url];
 }
 - (void)createWebViewForUrl:(NSString*)url withTitle:(NSString*)title{
 	Overlay* overlay = [m_pOverlayManager findOrCreateForUrl:url];
+	[overlay setTitle:title];
+	[self createWebViewForOverlay:overlay];
+}
+
+- (void)createWebViewForOverlay:(Overlay*)overlay {
 	
 	// :TODO: handle case where we already have a web view
 
@@ -110,13 +157,17 @@ OverlayManager* m_pOverlayManager;
 	
 	NSRect rect = self.view.bounds;
 	
+	rect.origin.y += overlay.position.y;
+	rect.size.height += overlay.position.y;	// looks like "size" is actually "end position"
+	/*
 	if( overlay.position.y > 0 ) {
 		rect.origin.y += overlay.position.y;
-		rect.size.height -= overlay.position.y;
+//		rect.size.height -= overlay.position.y;
 	} else {
-		rect.size.height += overlay.position.y; // this value is negative!
+		rect.origin.y += overlay.position.y;
+//		rect.size.height += overlay.position.y; // this value is negative!
 	}
-	
+	*/
 	NSLog(@"Rect for %@: %f,%f | %fx%f", overlay.title, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height );
 	
 //	rect.origin.x = 400;
@@ -126,15 +177,22 @@ OverlayManager* m_pOverlayManager;
 	rect.origin.x = 400;
 	rect.origin.x = 100;
 	rect.size.width = 800;
-	rect.size.height = 900;
-*/
+	rect.size.height = 800;
+	*/
+
 //	NSView* subView = [[NSView alloc] initWithFrame:rect];
 //	[self.view addSubview:subView];
 
 	WKWebView* webView = [[WKWebView alloc] initWithFrame:rect];
 	[webView setValue:[NSNumber numberWithInt:false] forKey:@"drawsBackground"];
 
-	webView.frame = rect;
+//	webView.frame = rect;
+	/*
+	rect.origin.y = 100;
+	rect.size.width *= 1.0;
+	rect.size.height *= 1.0;
+	webView.bounds = rect;
+	*/
 	[webView setTranslatesAutoresizingMaskIntoConstraints:NO];
 	webView.navigationDelegate = self;
 //	[webView reload];
@@ -143,15 +201,21 @@ OverlayManager* m_pOverlayManager;
 	[self.view addSubview:webView];
 //	[subView addSubview:webView];
 	
-	
 	[overlay setWebView:webView];
-	[overlay setTitle:title];
+
+	if( overlay.enabled )
+	{
+		[webView setHidden:NO];
+	}
+	else
+	{
+		[webView setHidden:YES];
+	}
 
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-		NSLog(@"Loading... %@", url);
-		NSURL* urlUrl = [NSURL URLWithString:url];
+		NSLog(@"Loading... %@", overlay.url);
+		NSURL* urlUrl = [NSURL URLWithString:overlay.url];
 		NSURLRequest* request = [NSURLRequest requestWithURL:urlUrl];
-		Overlay* overlay = [m_pOverlayManager findOrCreateForUrl:url];
 		if( overlay.webView != nil )
 		{
 			[overlay.webView loadRequest:request];
@@ -253,18 +317,26 @@ OverlayManager* m_pOverlayManager;
 		return;
 	}
 	
+	Overlay* overlay = [self findOverlayForMenuItem:menuItem];
+	if( overlay == nil )
+	{
+		return;
+	}
+
 	switch( menuItem.state )
 	{
 		case NSControlStateValueOn:
 			{
 				[menuItem setState: NSControlStateValueOff];
 				[webView setHidden:YES];
+				[overlay setEnabled:NO];
 			}
 			break;
 		case NSControlStateValueOff:
 			{
 				[menuItem setState: NSControlStateValueOn];
 				[webView setHidden:NO];
+				[overlay setEnabled:YES];
 			}
 			break;
 	}
@@ -360,9 +432,12 @@ OverlayManager* m_pOverlayManager;
 		overlay = [m_pOverlayManager findOrCreateForUrl:newOverlay.url];
 	}
 	if( overlay != nil ) {
+		[overlay assignFrom:newOverlay];
+		/*
 		[overlay setTitle:newOverlay.title];
 		[overlay setPositionX:newOverlay.position.x];
 		[overlay setPositionY:newOverlay.position.y];
+		 */
 	}
 	if( titleChanged ) {
 		[self rebuildMenu];	// :TODO: could probably just patch the old entry

@@ -25,10 +25,10 @@
 	[self.urlTextField setStringValue:@"[hidden]"];
 //	[self.urlTextField setStringValue:self.modifiedOverlay.url];
 	[self.showUrlCheckBox setState:NSControlStateValueOff];
-	[self.startupStateComboBox addItemWithObjectValue:@"On"];
+	[self.startupStateComboBox addItemWithObjectValue:@"On"];	// :TODO: this list should come from Overlay
 	[self.startupStateComboBox addItemWithObjectValue:@"Off"];
 	[self.startupStateComboBox addItemWithObjectValue:@"Last"];
-	[self.startupStateComboBox selectItemWithObjectValue:@"Last"];
+	[self.startupStateComboBox selectItemWithObjectValue:self.modifiedOverlay.startupStateAsString];
 	
 	[self.positionXTextField setIntegerValue:self.modifiedOverlay.position.x];
 	[self.positionYTextField setIntegerValue:self.modifiedOverlay.position.y];
@@ -88,6 +88,14 @@
 - (void)setOverlay:(Overlay *)overlay {
 	_overlay = overlay;
 	self.modifiedOverlay = [_overlay mutableCopy];
+}
+
+- (IBAction)startupStateComboBoxChanged:(NSComboBox *)sender {
+	NSString* value = [self.startupStateComboBox stringValue];
+	NSLog(@"Startup State changed to %@", value );
+	enum OverlayStartupState state = [Overlay startupStateFromString:value];
+	[self.modifiedOverlay setStartupState:state];
+	[self onModification];
 }
 
 - (IBAction)positionYChanged:(id)sender {
