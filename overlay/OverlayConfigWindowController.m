@@ -20,10 +20,9 @@
 - (void)windowDidLoad {
     [super windowDidLoad];
 	NSLog(@"OverlayConfigWindow Loaded");
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
+	[self.uuidLabel setStringValue:[self.modifiedOverlay.uuid UUIDString]];
 	[self.labelTextField setStringValue:self.modifiedOverlay.title];
 	[self.urlTextField setStringValue:@"[hidden]"];
-//	[self.urlTextField setStringValue:self.modifiedOverlay.url];
 	[self.showUrlCheckBox setState:NSControlStateValueOff];
 	[self.startupStateComboBox addItemWithObjectValue:@"On"];	// :TODO: this list should come from Overlay
 	[self.startupStateComboBox addItemWithObjectValue:@"Off"];

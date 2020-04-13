@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak) IBOutlet NSButton *cancelButton;
 @property (weak) IBOutlet NSTextField *positionXTextField;
 @property (weak) IBOutlet NSTextField *positionYTextField;
+@property (weak) IBOutlet NSTextField *uuidLabel;
 
 - (IBAction)labelChanged:(NSTextField *)sender;
 - (IBAction)urlChanged:(NSTextField *)sender;

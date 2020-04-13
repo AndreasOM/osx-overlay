@@ -247,6 +247,7 @@ OverlayManager* m_pOverlayManager;
 			if( ![oi.title isEqualToString:overlay.title] ) {
 				[oi setTitle:overlay.title];
 			}
+			[oi setState: overlay.enabled?NSControlStateValueOn:NSControlStateValueOff];
 		} else {			// new overlay
 			[self addOverlayToMenu:overlay];
 		}
@@ -270,7 +271,7 @@ OverlayManager* m_pOverlayManager;
 //	[[menuItemMenu addItemWithTitle:@"Toggle" action:@selector(menuUrlToggle:) keyEquivalent:@""] setTarget:self];
 	[[menuItemMenu addItemWithTitle:@"Remove" action:@selector(menuUrlRemove:) keyEquivalent:@""] setTarget:self];
 	[[menuItemMenu addItemWithTitle:@"Edit" action:@selector(menuUrlEdit:) keyEquivalent:@""] setTarget:self];
-	[menuItem setState: NSControlStateValueOn];
+	[menuItem setState: overlay.enabled?NSControlStateValueOn:NSControlStateValueOff];
 	[menuItem setRepresentedObject:overlay];
 	[overlaysMenu addItem:menuItem];
 	[overlaysMenu setSubmenu:menuItemMenu forItem:menuItem];
