@@ -23,6 +23,9 @@ enum OverlayStartupState { On, Off, Last };
 @property NSPoint		position;
 @property enum OverlayStartupState	startupState;
 @property bool			enabled;
+@property unsigned char	midiOnNote;
+@property unsigned char	midiOffNote;
+
 
 + (id)createWithUrl:(NSString*)url;
 - (id)initWithUrl:(NSString*)url andTitle:(NSString*)title;

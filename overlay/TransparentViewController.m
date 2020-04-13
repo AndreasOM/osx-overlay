@@ -18,7 +18,7 @@
 @interface TransparentViewController ()
 
 @property OverlayConfigWindowController* overlayConfigWindowController;
-
+@property bool overlayRequestedMidiNote;
 @end
 
 //NSMutableDictionary* m_pOverlays;
@@ -90,6 +90,7 @@ OverlayManager* m_pOverlayManager;
 
 	[self rebuildMenu];
 
+	self.overlayRequestedMidiNote = false;
 	m_pMidiInput = [[MidiInput alloc] init];
 	
 	[m_pMidiInput sendNoteOn:0x0c withVelocity:0x7f onChannel:0]; // enter extended mode // Note: Should be 15, but that seems broken
@@ -111,30 +112,62 @@ OverlayManager* m_pOverlayManager;
 	[m_pMidiInput sendNoteOn:96 withVelocity:1 onChannel:7]; // pulse
 */
 	[m_pMidiInput registerNoteOnBlock:^(unsigned char note) {
-		NSLog(@"Note ON: %d", note );
-		switch( note )
+		if( self.overlayRequestedMidiNote )
 		{
-			case 96:	// 1 on my novation launchkey mini
+			if(self.overlayConfigWindowController != nil )
+			{
+				[self.overlayConfigWindowController midiNoteAnswer:note];
+				self.overlayRequestedMidiNote = false;
+			}
+		}
+		else
+		{
+			[m_pOverlayManager foreach:^(Overlay* overlay) {
+				if( overlay.midiOnNote == note )
 				{
-					int c = arc4random_uniform(127);
-					[m_pMidiInput sendNoteOn:96 withVelocity:c onChannel:0]; //color feedback
-					// velocity: 1 = red, 16 = green, 51 = orange
-//					[m_pMidiInput sendNoteOn:96 withVelocity:51 onChannel:16]; //color feedback
+					dispatch_async(dispatch_get_main_queue(), ^{
+						NSLog(@"Enabling %@", overlay.title);
+						overlay.enabled = true;
+						[self updateOverlayMenuItem:overlay];
+						
+					});
 				}
-				break;
-			default:
+				else if( overlay.midiOffNote == note )
 				{
-					if( note >= 0 && note <= 120 && note != 0x0c )
+					dispatch_async(dispatch_get_main_queue(), ^{
+						NSLog(@"Disabling %@", overlay.title);
+						overlay.enabled = false;
+						[self updateOverlayMenuItem:overlay];
+					});
+				}
+			}];
+		}
+			/*
+			switch( note )
+			{
+				case 96:	// 1 on my novation launchkey mini
 					{
 						int c = arc4random_uniform(127);
-						[m_pMidiInput sendNoteOn:note withVelocity:c onChannel:0]; //color feedback
-						dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-							[m_pMidiInput sendNoteOn:note withVelocity:0 onChannel:0]; //color feedback
-						});
+						[m_pMidiInput sendNoteOn:96 withVelocity:c onChannel:0]; //color feedback
+						// velocity: 1 = red, 16 = green, 51 = orange
+	//					[m_pMidiInput sendNoteOn:96 withVelocity:51 onChannel:16]; //color feedback
 					}
-				}
-				break;
+					break;
+				default:
+					{
+						if( note >= 0 && note <= 120 && note != 0x0c )
+						{
+							int c = arc4random_uniform(127);
+							[m_pMidiInput sendNoteOn:note withVelocity:c onChannel:0]; //color feedback
+							dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+								[m_pMidiInput sendNoteOn:note withVelocity:0 onChannel:0]; //color feedback
+							});
+						}
+					}
+					break;
+			}
 		}
+		*/
 	}];
 }
 
@@ -343,6 +376,24 @@ OverlayManager* m_pOverlayManager;
 	}
 }
 
+- (void)updateOverlayMenuItem:(Overlay*)overlay {
+	NSMenuItem* menuItem = [self findMenuItemForOverlay:overlay];
+	
+	if( menuItem == nil )
+	{
+		return;
+	}
+	
+	WKWebView* webView = [self findWebViewForMenuItem:menuItem];
+	if( webView == nil )
+	{
+		return;
+	}
+
+	[menuItem setState:overlay.enabled?NSControlStateValueOn:NSControlStateValueOff];
+	[webView setHidden:!overlay.enabled];
+}
+
 - (void)menuUrlEdit:(id)sender {
 	NSMenuItem* menuItem = (NSMenuItem*)sender;
 	NSLog(@"Edit %@", menuItem.parentItem.title);
@@ -387,6 +438,23 @@ OverlayManager* m_pOverlayManager;
 	}
 	
 	return overlay;
+}
+						  
+- (NSMenuItem*)findMenuItemForOverlay:(Overlay*)overlay {
+	NSMenu* mainMenu = [[NSApplication sharedApplication] mainMenu];
+	
+	NSMenuItem* overlaysItem = [mainMenu itemWithTitle:@"Overlays"];
+	NSMenu* overlaysMenu = overlaysItem.submenu;
+
+	NSInteger index = [overlaysMenu indexOfItemWithRepresentedObject:overlay];
+	if( index >= 0 )
+	{
+		return [overlaysMenu itemAtIndex:index];
+	}
+	else
+	{
+		return nil;
+	}
 }
 
 - (void)menuAddOverlay:(id)sender {
@@ -462,5 +530,13 @@ OverlayManager* m_pOverlayManager;
 	NSLog(@"didFinishNavigation");
 }
 
+#pragma mark Overlay Config Delegate
+
+- (void)overlayMidiNoteRequest {
+	self.overlayRequestedMidiNote = true;
+}
+- (void)overlayCancelMidiNoteRequest {
+	self.overlayRequestedMidiNote = false;
+}
 
 @end

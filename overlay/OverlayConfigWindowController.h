@@ -17,9 +17,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)overlayChanged:(Overlay *)overlay was:(Overlay *)oldOverlay;
 - (void)overlayChangeCanceled:(Overlay *)overlay;
 - (void)overlayPositionChanged:(Overlay *)overlay;
+- (void)overlayMidiNoteRequest;
+- (void)overlayCancelMidiNoteRequest;
 @end
 
 @interface OverlayConfigWindowController : NSWindowController
+
+- (void)midiNoteAnswer:(unsigned char)note;
 
 @property (weak) IBOutlet NSTextField *labelTextField;
 @property (weak) IBOutlet NSTextField *urlTextField;
@@ -30,6 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak) IBOutlet NSTextField *positionXTextField;
 @property (weak) IBOutlet NSTextField *positionYTextField;
 @property (weak) IBOutlet NSTextField *uuidLabel;
+@property (weak) IBOutlet NSButton *midiOnNoteButton;
+@property (weak) IBOutlet NSButton *midiOffNoteButton;
 
 - (IBAction)labelChanged:(NSTextField *)sender;
 - (IBAction)urlChanged:(NSTextField *)sender;
@@ -39,6 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (IBAction)positionXChanged:(NSTextField *)sender;
 - (IBAction)positionYChanged:(id)sender;
 - (IBAction)startupStateComboBoxChanged:(NSComboBox *)sender;
+- (IBAction)midiOnNoteButtonClicked:(NSButton *)sender;
+- (IBAction)midiOffNoteButtonClicked:(NSButton *)sender;
 
 - (void)setOverlay:(Overlay *)overlay;
 

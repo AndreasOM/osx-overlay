@@ -9,7 +9,9 @@ Adds one or more transparent web views over the OSX desktop.
 [ ] Actually destroy web view when unticking in menu (?  Maybe just deactivate it?)
 [ ] Do not store web view in overlay
 [ ] Add (optional) auto disable timer to windows, e.g. for one-shot animations
-[ ] Allow enable/disable via MIDI command
+[ ] Add (optional) midi command for disable/enable
+[ ] Add option to reload on enable
+[ ] Cleanup menu update logic
 
 # DONE
 [x] Add window to allow adding/editing URLs
@@ -19,3 +21,4 @@ Adds one or more transparent web views over the OSX desktop.
 [x] Set tick mark in menu based on enabled state
 [x] Display UUID in config window (read only)
 [x] Improved overlay config window
+[x] Allow enable/disable via MIDI command

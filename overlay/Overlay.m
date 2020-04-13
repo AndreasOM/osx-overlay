@@ -22,6 +22,8 @@
 		self.position = NSMakePoint( 0.0f, 0.0f );
 		self.startupState = On;
 		self.enabled = true;
+		self.midiOnNote = 0;
+		self.midiOffNote = 0;
 	}
 	return self;
 }
@@ -33,6 +35,8 @@
 		self.position = NSMakePoint( 0.0f, 0.0f );
 		self.startupState = On;
 		self.enabled = true;
+		self.midiOnNote = 0;
+		self.midiOffNote = 0;
     }
     return self;
 }
@@ -42,6 +46,8 @@
 		[_title isEqualTo:overlay->_title]
 		&& [_url isEqualTo:overlay->_url]
 		&& NSEqualPoints( _position, overlay->_position )
+		&& ( _midiOnNote == overlay->_midiOnNote )
+		&& ( _midiOffNote == overlay->_midiOffNote )
 	;
 }
 
@@ -61,7 +67,8 @@
 	[d setObject:[NSNumber numberWithFloat:self.position.y] forKey:@"posY"];
 	[d setObject:[self startupStateAsString] forKey:@"startupState"];
 	[d setObject:[NSNumber numberWithBool:self.enabled] forKey:@"enabled"];
-
+	[d setObject:[NSNumber numberWithUnsignedChar:self.midiOnNote] forKey:@"midiOnNote"];
+	[d setObject:[NSNumber numberWithUnsignedChar:self.midiOffNote] forKey:@"midiOffNote"];
 	return d;
 }
 
@@ -135,6 +142,10 @@
 
 	}
 	self.enabled = enabled;
+	NSNumber* midiOnNote = [d objectForKey:@"midiOnNote" ];
+	self.midiOnNote = midiOnNote?[midiOnNote unsignedCharValue]:0;
+	NSNumber* midiOffNote = [d objectForKey:@"midiOffNote" ];
+	self.midiOffNote = midiOffNote?[midiOffNote unsignedCharValue]:0;
 }
 
 - (void)assignFrom:(Overlay *)overlay {
@@ -144,6 +155,8 @@
 //!	self.webView = overlay.webView;
 	self.startupState = overlay.startupState;
 	self.enabled = overlay.enabled;
+	self.midiOnNote = overlay.midiOnNote;
+	self.midiOffNote = overlay.midiOffNote;
 }
 
 - (id)copyWithZone:(NSZone *)zone {
@@ -154,6 +167,7 @@
 	overlay->_webView = nil;	// we explicitly don't copy the webview
 	overlay->_startupState = _startupState;
 	overlay->_enabled = _enabled;
+	overlay->_midiOnNote = _midiOnNote;
 	
 	return overlay;
 }
@@ -164,6 +178,7 @@
 	overlay->_webView = nil;	// we explicitly don't copy the webview
 	overlay->_startupState = _startupState;
 	overlay->_enabled = _enabled;
+	overlay->_midiOnNote = _midiOnNote;
 
 	return overlay;
 }

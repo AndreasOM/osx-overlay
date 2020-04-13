@@ -8,10 +8,14 @@
 
 #import "OverlayConfigWindowController.h"
 
+enum MidiNoteRequestState { None, OnNoteRequested, OffNoteRequested };
+
 @interface OverlayConfigWindowController ()
 @property (nonatomic) Overlay* overlay;
 @property Overlay* modifiedOverlay;
+@property enum MidiNoteRequestState midiNoteRequestState;
 @end
+
 
 @implementation OverlayConfigWindowController
 
@@ -32,8 +36,12 @@
 	[self.positionXTextField setIntegerValue:self.modifiedOverlay.position.x];
 	[self.positionYTextField setIntegerValue:self.modifiedOverlay.position.y];
 
+	[self.midiOnNoteButton setTitle:[NSString stringWithFormat:@"%02X", self.modifiedOverlay.midiOnNote]];
+	[self.midiOffNoteButton setTitle:[NSString stringWithFormat:@"%02X", self.modifiedOverlay.midiOffNote]];
 	[self showUrlToggled:self.showUrlCheckBox];
 	[self onModification];
+	
+	self.midiNoteRequestState = None;
 }
 
 - (IBAction)saveButtonClicked:(NSButton *)sender {
@@ -87,6 +95,73 @@
 - (void)setOverlay:(Overlay *)overlay {
 	_overlay = overlay;
 	self.modifiedOverlay = [_overlay mutableCopy];
+}
+
+- (IBAction)midiOffNoteButtonClicked:(NSButton *)sender {
+	if( self.midiNoteRequestState == None )
+	{
+		// new request
+		if( [delegate respondsToSelector:@selector(overlayMidiNoteRequest)] ){
+			[self.delegate overlayMidiNoteRequest];
+		}
+		self.midiNoteRequestState = OffNoteRequested;
+	}
+	else
+	{
+		// cancel old request
+		if( [delegate respondsToSelector:@selector(overlayCancelMidiNoteRequest)] ){
+			[self.delegate overlayCancelMidiNoteRequest];
+		}
+		self.midiNoteRequestState = None;
+	}
+}
+
+- (IBAction)midiOnNoteButtonClicked:(NSButton *)sender {
+	if( self.midiNoteRequestState == None )
+	{
+		// new request
+		if( [delegate respondsToSelector:@selector(overlayMidiNoteRequest)] ){
+			[self.delegate overlayMidiNoteRequest];
+		}
+		self.midiNoteRequestState = OnNoteRequested;
+	}
+	else
+	{
+		// cancel old request
+		if( [delegate respondsToSelector:@selector(overlayCancelMidiNoteRequest)] ){
+			[self.delegate overlayCancelMidiNoteRequest];
+		}
+		self.midiNoteRequestState = None;
+	}
+}
+
+- (void)midiNoteAnswer:(unsigned char)note {
+	switch( self.midiNoteRequestState )
+	{
+		case None:
+			// :TODO: we didn't request that, or maybe just changed our mind without telling the caller?
+			break;
+		case OnNoteRequested:
+			{
+				dispatch_async(dispatch_get_main_queue(), ^{
+					self.modifiedOverlay.midiOnNote = note;
+					[self.midiOnNoteButton setTitle:[NSString stringWithFormat:@"%02X", self.modifiedOverlay.midiOnNote]];
+					[self onModification];
+				});
+				self.midiNoteRequestState = None;
+			}
+			break;
+		case OffNoteRequested:
+			{
+				dispatch_async(dispatch_get_main_queue(), ^{
+					self.modifiedOverlay.midiOffNote = note;
+					[self.midiOffNoteButton setTitle:[NSString stringWithFormat:@"%02X", self.modifiedOverlay.midiOffNote]];
+					[self onModification];
+				});
+				self.midiNoteRequestState = None;
+			}
+			break;
+	}
 }
 
 - (IBAction)startupStateComboBoxChanged:(NSComboBox *)sender {
